@@ -52,3 +52,13 @@ mse = as.numeric(t(residuos)%*%residuos)/(length(x) - 2)
 ```
 
 **Observação:** a relação $MSE = \frac{SSE}{n-2} = \frac{e'e}{n-2}$ foi encontrada no livro [Weisberg, S. Applied Linear Regression, 4th Edition](http://users.stat.umn.edu/~sandy/alr4ed/)
+
+#Resolução da parte feita na calculadora
+
+**Observação** : Esta parte foi inteiramente feita na calculadora e somente digita usando utilizando as linguagens Markdown e LateX.
+
+O problema nos oferece um conjunto de dados da composição de ferro em 13 ligas metálicas do tipo 90/10 de cobre-nitrato e o resultado de um teste de corrosão nestas mesmas 13 ligas. Devemos, para resolver este exercício, responder se um modelo de regressão linear explica bem a relação entre quantidade de ferro antes do tratamento e o peso após, com o efeito da corrosão.
+
+Para isto, vamos propor o modelo de regressão linear simples (MRLS) dado por $$Y_i = \beta_0 + X\beta_1 + \epsilon_i$$ onde $\epsilon_i ~ N(0,\sigma^2)$. O modelo de reta ajustada é dado pela equação $$\hat{Y_i} = \hat{\beta_0} + X_i\hat{\beta_1}$$.Utilizando uma calculadora científica, estimamos os coeficientes angulares e lineares $\hat{\beta_1}$ $\hat{\beta_0}$, respectivamente. O resultado obtido foi que $\hat{\beta_0} \approx 131.82$ e $\hat{\beta_1} \approx -24.59$.
+
+Para avaliar se o MRLS é um modelo adequado, existem várias ferramentas. Para isso, vamos fazer um Análise de Variância do modelo para checar se há falta de ajuste. 
