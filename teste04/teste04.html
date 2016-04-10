@@ -164,6 +164,14 @@ y &lt;- c(7.8,9,10.2,11,11.7)</code></pre>
 ## x 0.000000000 0.0003083333</code></pre>
 <p><strong>Observação:</strong> a relação <span class="math inline">\(MSE = \frac{SSE}{n-2} = \frac{e'e}{n-2}\)</span> foi encontrada no livro <a href="http://users.stat.umn.edu/~sandy/alr4ed/">Weisberg, S. Applied Linear Regression, 4th Edition</a></p>
 </div>
+<div id="resolucao-da-parte-feita-na-calculadora" class="section level1">
+<h1>Resolução da parte feita na calculadora</h1>
+<p><strong>Observação</strong> : Esta parte foi inteiramente feita na calculadora e somente digita usando utilizando as linguagens Markdown e LateX.</p>
+<p>O problema nos oferece um conjunto de dados da composição de ferro em 13 ligas metálicas do tipo 90/10 de cobre-nitrato e o resultado de um teste de corrosão nestas mesmas 13 ligas. Devemos, para resolver este exercício, responder se um modelo de regressão linear explica bem a relação entre quantidade de ferro antes do tratamento e o peso após, com o efeito da corrosão.</p>
+<p>Para isto, vamos propor o modelo de regressão linear simples (MRLS) dado por <span class="math display">\[Y_i = \beta_0 + X\beta_1 + \epsilon_i\]</span> onde <span class="math inline">\(\epsilon_i ~ N(0,\sigma^2)\)</span>. O modelo de reta ajustada é dado pela equação <span class="math display">\[\hat{Y_i} = \hat{\beta_0} + X_i\hat{\beta_1}\]</span>.Utilizando uma calculadora científica, estimamos os coeficientes angulares e lineares <span class="math inline">\(\hat{\beta_1}\)</span> <span class="math inline">\(\hat{\beta_0}\)</span>, respectivamente. O resultado obtido foi que <span class="math inline">\(\hat{\beta_0} \approx 131.78\)</span> e <span class="math inline">\(\hat{\beta_1} \approx -24.01\)</span>.</p>
+<p>Para avaliar se o MRLS é um modelo adequado, existem várias ferramentas. Para isso, vamos fazer um Análise de Variância (do ingles Analysis of Variance, ANOVA) do modelo para checar se há falta de ajuste. Nesta ANOVA, também será incluso informações sobre falta de ajuste, pois já que temos mais de 1 replicação para cada nível de X, exceto para os valores de <span class="math inline">\(0.95\)</span> e <span class="math inline">\(1.19\)</span>.</p>
+<p>Primeiramente vamos encontrar as soma de quadrado dos erros (do ingles, SQE), soma de quadrados de regressão (do ingles, SQreg) e soma de quadrados totais (do ingles, SQtotal) dadas por <span class="math display">\[SQE = \sum_{i=1}^{13}(Y_i - \hat{Y}^2)\]</span> <span class="math display">\[SQreg = \sum_{i=1}^{13}(\hat{Y_i} - \bar{Y})^2\]</span> <span class="math display">\[SQtotal = SQE = SQreg\]</span></p>
+</div>
 
 
 
