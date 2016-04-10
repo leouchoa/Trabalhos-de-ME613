@@ -1,0 +1,54 @@
+---
+title : "Teste04 - ME613"
+---
+
+#Resolução do exercício do slide de número 5.
+
+Para o conjunto de dados 
+
+```{r conjunto}
+x <- c(8,4,0,-4,-8)
+y <- c(7.8,9,10.2,11,11.7)
+```
+
+Devemos calcular as matrizes $Y'Y$, $X'X$, $X'Y$, $(X'X)^{-1}$, estimar o vetor $\hat{\beta}$, calcular o vetor de resíduos e calcular a matriz de variância e covariância para $\hat{\beta}$.
+
+O cálculo das matrizes é feito a seguir. (Lembre-se que antes de qualquer conta, devemos acrescentar a coluna de "1's" para o $\hat{\beta_0}$)
+
+```{r matrizes}
+
+(newx = cbind(rep(1,length(x)),x))
+
+(yty = t(y)%*%y)
+
+(xtx = t(newx)%*%newx)
+
+(xty = t(newx)%*%y)
+
+(xtx_inv = solve(xtx))
+```
+
+
+Agora vamos para o cáculo de $\hat{\beta}$ que é dado simplesmente pelas equações normais $$\hat{\beta} = (X'X)^{-1}X'Y $$. Portanto, temos que 
+
+```{r eqnormais}
+(beta_hat = xtx_inv%*%xty)
+```
+
+Partindo para o cáculo do vetor de resíduos, podemos utilizar a relação $$e = Y - \hat{Y}$$, que nos fornece o resultado a seguir 
+
+```{r residuos}
+y_hat = newx%*%beta_hat
+(residuos = y - y_hat)
+```
+
+Por fim, para o calulo da matriz de variância e covariância, utilizaremos a relação $$\bf{\sigma^2(b)_{2x2}} = \sigma (X'X)^{-1} $$. Mas como não temos o valor de $\sigma^2$, devemos estima-lo utilizando o erro quadrático médio(MSE em ingles) dado por $$MSE = \frac{SSE}{n-2} = \frac{e'e}{n-2}$$. Portanto, a matriz de variância e covariância de $\hat{\beta}$ será $$\bf{s^2(b)_{2x2}} = MSE(X'X)^{-1}$$
+
+```{r covmat}
+mse = as.numeric(t(residuos)%*%residuos)/(length(x) - 2)
+
+(covmat = mse*xtx_inv)
+
+```
+
+**Observação:** a relação $MSE = \frac{SSE}{n-2} = \frac{e'e}{n-2}$ foi encontrada no livro [Weisberg, S. Applied Linear Regression, 4th Edition](http://users.stat.umn.edu/~sandy/alr4ed/)
