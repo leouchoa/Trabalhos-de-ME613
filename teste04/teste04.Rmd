@@ -55,12 +55,24 @@ mse = as.numeric(t(residuos)%*%residuos)/(length(x) - 2)
 
 #Resolução da parte feita na calculadora
 
-**Observação** : Esta parte foi inteiramente feita na calculadora e somente digita usando utilizando as linguagens Markdown e LateX.
+**Observação** : Esta parte foi inteiramente feita na calculadora e somente digitada utilizando os sistem tipográficos Markdown e LateX.
 
 O problema nos oferece um conjunto de dados da composição de ferro em 13 ligas metálicas do tipo 90/10 de cobre-nitrato e o resultado de um teste de corrosão nestas mesmas 13 ligas. Devemos, para resolver este exercício, responder se um modelo de regressão linear explica bem a relação entre quantidade de ferro antes do tratamento e o peso após, com o efeito da corrosão.
 
-Para isto, vamos propor o modelo de regressão linear simples (MRLS) dado por $$Y_i = \beta_0 + X\beta_1 + \epsilon_i$$ onde $\epsilon_i ~ N(0,\sigma^2)$. O modelo de reta ajustada é dado pela equação $$\hat{Y_i} = \hat{\beta_0} + X_i\hat{\beta_1}$$.Utilizando uma calculadora científica, estimamos os coeficientes angulares e lineares $\hat{\beta_1}$ $\hat{\beta_0}$, respectivamente. O resultado obtido foi que $\hat{\beta_0} \approx 131.78$ e $\hat{\beta_1} \approx -24.01$.
+Para isto, vamos propor o modelo de regressão linear simples (MRLS) dado por $$Y_i = \beta_0 + X\beta_1 + \epsilon_i$$ onde $\epsilon_i \widetilde{} N(0,\sigma^2)$. O modelo de reta ajustada é dado pela equação $$\hat{Y_i} = \hat{\beta_0} + X_i\hat{\beta_1}$$.Utilizando uma calculadora científica, estimamos os coeficientes angulares e lineares $\hat{\beta_1}$ $\hat{\beta_0}$, respectivamente. O resultado obtido foi que $\hat{\beta_0} \approx 131.78$ e $\hat{\beta_1} \approx -24.01$.
 
 Para avaliar se o MRLS é um modelo adequado, existem várias ferramentas. Para isso, vamos fazer um Análise de Variância (do ingles Analysis of Variance, ANOVA) do modelo para checar se há falta de ajuste. Nesta ANOVA, também será incluso informações sobre falta de ajuste, pois já que temos mais de 1 replicação para cada nível de X, exceto para os valores de $0.95$ e $1.19$. 
 
-Primeiramente vamos encontrar as soma de quadrado dos erros (do ingles, SQE), soma de quadrados de regressão (do ingles, SQreg) e soma de quadrados totais (do ingles, SQtotal) dadas por $$SQE = \sum_{i=1}^{13}(Y_i - \hat{Y}^2)$$ $$SQreg = \sum_{i=1}^{13}(\hat{Y_i} - \bar{Y})^2$$ $$SQtotal = SQE + SQreg$$ 
+Primeiramente vamos encontrar as soma de quadrado dos erros (do ingles, SQE), soma de quadrados de regressão (do ingles, SQreg) e soma de quadrados totais (do ingles, SQtotal) dadas por $$SQE = \sum_{i=1}^{13}(Y_i - \hat{Y})^2$$ $$SQreg = \sum_{i=1}^{13}(\hat{Y_i} - \bar{Y})^2$$ $$SQtotal = SQE + SQreg$$ Dado que as contas são bem extensas até para um calculadora cientifica Kenko, vamos apenas dispor os valores de cada conta. Os valores são, portanto $SQE \approx 102.85$, $SQreg \approx 3291.05$ e $SQtotal \approx 102.85 + 3291.05 = 3393.90$. 
+
+Agora, vamos calcular as soma de quadrados do erro puro e soma de quadrados da falta de ajuste. Lembre-se que $$SQE = \sum_{j=1}^{13} \sum_{u=1}^{n_j}({Y_j}_u - \hat{Y_j})^2 = \sum_{j=1}^{13} \sum_{u=1}^{n_j}({Y_j}_u - \bar{Y_j})^2 + \sum_{j=1}^{13}n_j(\hat{Y_j} - \bar{Y_j})^2$$ Novamente, dado que as contas são de grande volume até para uma calculadora Kenko, vamos somente dispor os valores. Desta forma, $SQEpuro \approx 11.78$ e $SQFA \approx 91.06$. Juntando todos estes valores numa tabela, temos 
+
+```{r ANOVA, echo=FALSE}
+gl = c(1,11,5,6,12)
+nomes = c("Regressão","Erro","Falta de ajuste", "Erro puro", "Total(ajustada)")
+sq = c(3291.05,102.85,91.06,11.78,3393.90)
+(anova = data.frame(gl,sq, row.names= nomes))
+```
+
+Por fim, vamos fazer o teste de falta de ajuste, cuja estatística do teste é dado por $$F = \frac{SQFA/(m-2)}{SQEpuro/(n-m)}$$ Portanto $F = \frac{91.06/5}{11.78/6} \approx 9.275$. Desta forma, o p-valor será $P(X > F | H_0) \approx 0.008636$, que é muito baixo. Portanto rejeitamos a hipótese de que o MLRS é adequado aos dados.
+
