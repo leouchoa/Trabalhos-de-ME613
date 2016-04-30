@@ -1,0 +1,67 @@
+---
+title: Teste 07
+output: html_document
+---
+
+```{r preliminares, include=F}
+hd = c("ID", "County", "State", "Land_Area", "Total_Pop", "Pct_18_34", "Pct_65Plus", "num_Phys", "num_Beds", "Total_Crimes", "Pct_HSG", "Pct_Bdgree", "Pct_Below_Poverty_Level", "Pct_Unemployment", "PCI", "Total_Person_Inc", "Geographic_Region")
+
+CDI = read.table(file = "/home/leouchoa/Documents/papers/2016-1/regressao/codes/teste07/APPENC02.txt", header=F, col.names = hd)
+
+#CDI = read.table(file = "http://www.stat.ufl.edu/~rrandles/sta4210/Rclassnotes/data/textdatasets/KutnerData/Appendix%20C%20Data%20Sets/APPENC02.txt", header=F, col.names = hd)
+
+attach(CDI)
+
+vetor.ex143 = data.frame(Total_Pop, num_Beds, Total_Person_Inc)
+modelo.ex143 = vector("list", length(vetor.ex143))
+betas.ex143 = matrix(nrow = length(modelo.ex143), ncol = 2)
+mse.ex143 = rep(0,length(modelo.ex143))
+
+for(i in 1:length(modelo.ex143)){
+  modelo.ex143[[i]] = lm(num_Phys ~ data.matrix(vetor.ex143[i]))
+  betas.ex143[i,] = coef(modelo.ex143[[i]])
+  mse.ex143[i] = summary(modelo.ex143[[i]])$sigma^2
+}
+
+```
+
+
+#Exercício 4.26
+
+Este conjunto de exercícios é referente ao banco de dados "CDI" utilizado em exercícios anteriores. Aqui, voltamos nossa atenção à regressão do número de médicos ativos utilizando a variável "total da população" como preditora.
+
+##Item a
+
+Devemos construir um intervalo conjunto de Bonferroni para ambos $\beta_{0}$ e $\beta_{1}$. Utilizando a resolução do exercício, temos 
+
+```{r betas}
+betas.ex143
+```
+
+Lembre-se que o intervalo conjunto dado pela desigualdade de Bonferroni é $$\hat{\beta_{i}} \pm t_{n-2;alpha/2}\sqrt{\widehat{V(\widehat{\beta_{i}})}}.$$ Logo, o código a seguir nos permite obter os intervalos para os intercepto e coeficiente angular, respectivamente.
+
+```{r IC_Bonf_alg}
+m = length(betas.ex143[1,])
+alfa = 0.05
+
+IC.bonf = matrix(nrow = m, ncol = 2)
+colnames(IC.bonf) = c("Lower Bound", "Upper Bound")
+rownames(IC.bonf) = c("Intercept", "Slope")
+
+for (i in 1:m)
+  IC.bonf[i,] = betas.ex143[1,i] + c(-1,1)*summary(modelo.ex143[[1]])$coef[i,2]*qt(1-alfa/(2*m), df = summary(modelo.ex143[[1]])$df[2])
+
+```
+
+Que são
+
+```{r IC_Bonf_val, echo=F}
+round(IC.bonf, digits=6)
+```
+
+##Item b
+
+Neste item, é sugerido que $\beta_{0} = -100$ e $\beta_{1} = 0.0028$. Ao observar os limites construidos em a), podemos concluir que o intervalo suporta sim esta proposta, pois -100 está entre $[`r IC.bonf[1,] `]$ e 0.0028 está entre $[`r IC.bonf[2,] `]$.
+
+#item c
+
