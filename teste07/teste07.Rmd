@@ -137,8 +137,7 @@ Ao fazer o gráfico de ramo e folha para cada variável preditora (utilizando es
 
 
 ##Item b
-
-Para construirmos a matriz de dispersão para as variáveis desejadas foi utilizado o pacote "GGally" e em seguida o comando ggpairs, como segue abaixo.
+O gráfico de matriz de dispersão e a matriz de correlação são dados a seguir.
 
 ```{r matriz_disp}
 modelo.ex628 = vector("list", length = 2)
@@ -154,13 +153,17 @@ plot(Land_Area,num_Phys, xlab = "Area", ylab = "Numero de Medicos")
 plot(Total_Person_Inc,num_Phys, xlab = "Renda Per Capita", ylab = "Numero de Medicos")
 plot(dens_Pop,num_Phys, xlab = "Densidade Populacional", ylab = "Numero de Medicos")
 plot(Pct_65Plus,num_Phys, xlab = "Percentagem Populacao Acima de 65 Anos", ylab = "Numero de Medicos")
-plot(Total_Person_Inc,num_Phys, xlab = "Renda Per Capita", ylab = "Numero de Medicos")
+plot(Pct_65Plus,num_Phys, xlab = "Percentagem Populacao Acima de 65 Anos", ylab = "Numero de Medicos")
 
 summary(modelo.ex628[[1]], correlation = TRUE, digits = 4)$correlation
 summary(modelo.ex628[[2]], correlation = TRUE, digits = 4)$correlation
 ```
 
-Ao observar a matriz dispersão e  correlação, podemos ver que a única correlação realmente grande é entre as variáveis "Total Population" e "Total Personal Income", indicando que o ganho tem um crescimento linear com o total da população. Para o resto das variáveis a correlação é relativamente baixa (sendo negativa para as preditoras Área do terreno e População total) com alta concentração na parte inferior esquerda, o que suporta a ideia descrita no item anterior. 
+Ao visualizar a matriz dispersão podemos ver que há uma correlação bem alta entre o número de médicos e renda per capita, população total, enquanto que para o resto das variáveis a correlação é relativamente baixa. Partindo para a matriz de correlação podemos observar, para o modelo 1, que os coeficientes $\beta_1$ e $\beta_4$ têm correlação alta entre si (de `r summary(modelo.ex628[[2]], correlation = TRUE, digits = 4)$correlation[2,4]`), enquanto o resto é bastante variado, mas baixo. 
+
+Já para o modelo 2, os únicos coeficientes que têm correlação alta ( de `r summary(modelo.ex628[[2]], correlation = TRUE, digits = 4)$correlation[1,3]`) entre si são $\beta_0$ e $\beta_2$, ao passo que os outros ficam em torno de -0.03 -exceto $\beta_3$ e $\beta_4$.
+
+FALTA ENROLAR MAIS UM POUCO
 
 ##itens c-d
 
@@ -244,4 +247,4 @@ boxplot(modelo1.ex629[[1]]$residuals,modelo1.ex629[[2]]$residuals,modelo1.ex629[
 
 Para todas as regiões, podemos ver que há uma grande concentração de massa em torno do zero. Além disso, ao observarmos os valores máximos e mínimos de cada gráfico, para a escala atual, percebemos que a dispersão do resíduo é relativamente similar entre as regiões. Por fim, o ponto mais claro é a questão dos outliers, sendo bem visível para os boxplots 1 e 4 (os casos 2 e 3 são discutíveis).
 
-
+FALTA ENROLAR MAIS UM POUCO
