@@ -129,5 +129,44 @@ IC.ex426c
 
 Galera, tem um erro na linha 113. Eu não consigo encontrar o erro. Era pra dar 34.abcdef para cada um ao inves de 14.abcdef para cada, como tá dando. Por favor, procurem o erro, nao consigo encontrar. 
 
+#Exercício 6.28
+
+##Item a
+
+Ao fazer o gráfico de ramo e folha para cada variável preditora (utilizando escala 20, para termos maior precisão), podemos perceber que a população está fragmentada em cidades de areás menores, enquanto que nas maiores áreas não há tanta concentração, ou seja, este é um pais não muito povoado. Os fatos que suportam esta ideia são as grandes concentrações de massa nos "topos"/inicios de todos gráficos, exceto para a variável "área do território", que parece estar relativamente despersa ao longo dos níveis.
+
+
+##Item b
+
+Para construirmos a matriz de dispersão para as variáveis desejadas foi utilizado o pacote "GGally" e em seguida o comando ggpairs, como segue abaixo.
+
+```{r matriz_disp}
+data.new = data.frame(Land_Area,Total_Pop,Total_Person_Inc,Total_Pop/Land_Area)
+library(GGally)
+ggpairs(data.new)
+```
+
+Ao observar a matriz dispersão e  correlação, podemos ver que a única correlação realmente grande é entre as variáveis "Total Population" e "Total Personal Income", indicando que o ganho tem um crescimento linear com o total da população. Para o resto das variáveis a correlação é relativamente baixa (sendo negativa para as preditoras Área do terreno e População total) com alta concentração na parte inferior esquerda, o que suporta a ideia descrita no item anterior. 
+
+##itens c-d
+
+Neste exercício, devemos ajustar um modelo de regressão de múltiplo de primeira ordem $$Y_i = \sum_{i=0}^{k}X_i \beta_i + \epsilon_i$$ cuja função de regressão será $$E\{Y_i\} = \sum_{i=0}^{k}X_i \beta_i$$ onde $X_0 = 1$ e $k=3$. O código que realiza a regressão para os modelo1 e modelo2 propostos seguem abaixo.
+
+```{r models_reg}
+modelo1 = lm(num_Phys ~ Total_Pop + Land_Area + Total_Person_Inc)
+modelo2 = lm(num_Phys ~ Total_Pop/Land_Area + Pct_65Plus + Total_Person_Inc)
+```
+
+Adicionalmente, gostariamos de utilizar o $R^2$ múltiplo para ter uma palpite inicial de qual seria o melhor modelo ajustado pela reta de regressão de multipla de primeira ordem. Estes valores para cada modelo são dados a seguir. Note que eles são muito próximos logo, para este exemplo, o $R^2$ múltiplo não nos permite tirar qualquer conclusão.
+
+```{r R2}
+(summary(modelo1)$r.squared)
+(summary(modelo2)$r.squared)
+```
+
+##item e
+Para este, basta utilizar "plot(modelo.ex143[[i]], which = c(j,k))", caso outra pessoal, além de mim, que vá resolver nao perca tempo
+
+
 
 

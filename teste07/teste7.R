@@ -97,15 +97,25 @@ rownames(IC.ex426c) = as.character(vet.ex146c)
 sigma = summary(modelo.ex143[[1]])$sigma
 SXX = sum((Total_Pop - mean(Total_Pop))^2)
 qt = qt(alfa/2*m, summary(modelo.ex143[[1]])$df[2], lower.tail = FALSE)
+y.hat = vector(mode = "double",length = length(vet.ex146c))
 
 for (i in 1:length(vet.ex146c)){
   #County[which(Total_Pop >= vet.ex146c[i]*10^3 & Total_Pop < vet.ex146c[i]*10^3)]
-  y.hat = betas.ex143[1,1] + betas.ex143[1,2]*vet.ex146c[i]*10^3
+  y.hat[i] = betas.ex143[1,1] + betas.ex143[1,2]*vet.ex146c[i]*10^3
   IC.ex426c[i,] = y.hat + c(-1,1)*sqrt(sigma)*sqrt(1 + 1/length(Total_Pop)
                   + (vet.ex146c[i] - mean(Total_Pop))^2/SXX)
 }
 
+
+
 ########### 6.28 ############
-
-
+modelo1 = lm(num_Phys ~ Total_Pop + Land_Area + Total_Person_Inc)
+modelo2 = lm(num_Phys ~ Total_Pop/Land_Area + Pct_65Plus + Total_Person_Inc)
+stem(Total_Pop,scale=4)
+stem(Land_Area,scale=4)
+stem(Total_Person_Inc,scale=4)
+stem(Total_Pop/Land_Area,scale=20)
+data.new = data.frame(Land_Area,Total_Pop,Total_Person_Inc,Total_Pop/Land_Area)
+library(GGally)
+ggpairs(data.new)
 ########## 6.29 #############
