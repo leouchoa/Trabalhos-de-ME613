@@ -1,5 +1,6 @@
 ---
 title: Teste 07
+author: Grupo 03
 output: html_document
 ---
 
@@ -32,7 +33,7 @@ Este conjunto de exercícios é referente ao banco de dados "CDI" utilizado em e
 
 ##Item a
 
-Devemos construir um intervalo conjunto de Bonferroni para ambos $\beta_{0}$ e $\beta_{1}$. Utilizando a resolução do exercício, temos 
+Devemos construir um intervalo conjunto de Bonferroni para ambos $\beta_{0}$ e $\beta_{1}$. Utilizando a resolução do exercício 1.43, teste 05, temos 
 
 ```{r betas}
 betas.ex143
@@ -49,7 +50,8 @@ colnames(IC.bonf) = c("Lower Bound", "Upper Bound")
 rownames(IC.bonf) = c("Intercept", "Slope")
 
 for (i in 1:m)
-  IC.bonf[i,] = betas.ex143[1,i] + c(-1,1)*summary(modelo.ex143[[1]])$coef[i,2]*qt(1-alfa/(2*m), df = summary(modelo.ex143[[1]])$df[2])
+  IC.bonf[i,] = betas.ex143[1,i] + c(-1,1)*summary(modelo.ex143[[1]])$coef[i,2]*qt(1-alfa/(2*m), 
+                        df = summary(modelo.ex143[[1]])$df[2])
 
 ```
 
@@ -77,7 +79,7 @@ Primeiramente, note que os métodos são bem parecidos
 2. Working-Hotelling
  $$\hat{Y_h} \pm W\sqrt{\widehat{V(\widehat{Y_h})}}$$
 
-    onde $$W^2 = gF(1-alpha;g , n - 2)$$ $g$ é o número de estimadores pontuais para os quais queremos criar o intervalo conjunto e a variância do estimador de predição de média, $\hat{Y_h}$ é $$V(\hat{Y_h}) = \sqrt{MSE} \sqrt{\frac{1}{g} + \frac{1}{n} + \frac{( X_h - \hat{X})^2}{S_{xx}}}$$.
+    onde $$W^2 = gF(1-alpha;g , n - 2)$$ $g$ é o número de estimadores pontuais para os quais queremos criar o intervalo conjunto e a variância do estimador de predição de média, $\hat{Y_h}$ é $$V(\hat{Y_h}) = \sqrt{MSE} \sqrt{\frac{1}{n} + \frac{( X_h - \hat{X})^2}{S_{xx}}}$$.
 
 Desta forma, para obtermos o melhor intervalo basta comparar os quantís W e B e ver qual é o menor, pois a única diferença entre as duas técnicas é o quantil. Segue o algorítmo que obtém estes valores.
 
@@ -110,7 +112,7 @@ v_y.hat = rep(0,length=length(X_h))
 MSE2 = summary(beta.ex426)$sigma
 Sxx  = sum((Total_Pop - mean(Total_Pop))^2)
 for (i in 1:length(X_h)) {
-  v_y.hat[i] = sqrt(MSE2*(1/g + 1/n + (X_h[i]-mean(Total_Pop))^2/Sxx))
+  v_y.hat[i] = MSE2*sqrt((1/n + (X_h[i]-mean(Total_Pop))^2/Sxx))
 }
 v_y.hat
 ```
@@ -127,8 +129,6 @@ for (i in 1:length(X_h)) {
 IC.ex426c
 ```
 
-Galera, tem um erro na linha 113. Eu não consigo encontrar o erro. Era pra dar 34.abcdef para cada um ao inves de 14.abcdef para cada, como tá dando. Por favor, procurem o erro, nao consigo encontrar. 
-
 #Exercício 6.28
 
 ##Item a
@@ -141,9 +141,23 @@ Ao fazer o gráfico de ramo e folha para cada variável preditora (utilizando es
 Para construirmos a matriz de dispersão para as variáveis desejadas foi utilizado o pacote "GGally" e em seguida o comando ggpairs, como segue abaixo.
 
 ```{r matriz_disp}
-data.new = data.frame(Land_Area,Total_Pop,Total_Person_Inc,Total_Pop/Land_Area)
-library(GGally)
-ggpairs(data.new)
+modelo.ex628 = vector("list", length = 2)
+dens_Pop = Total_Pop/Land_Area
+
+modelo.ex628[[1]] = lm(num_Phys ~ Total_Pop + Land_Area + Total_Person_Inc)
+modelo.ex628[[2]] = lm(num_Phys ~ dens_Pop + Pct_65Plus + Total_Person_Inc)
+
+par(pty="s")
+par(mfrow = c(2,3))
+plot(x = Total_Pop, y = num_Phys, xlab = "Populacao Total" , ylab = "Numero de Medicos")
+plot(Land_Area,num_Phys, xlab = "Area", ylab = "Numero de Medicos")
+plot(Total_Person_Inc,num_Phys, xlab = "Renda Per Capita", ylab = "Numero de Medicos")
+plot(dens_Pop,num_Phys, xlab = "Densidade Populacional", ylab = "Numero de Medicos")
+plot(Pct_65Plus,num_Phys, xlab = "Percentagem Populacao Acima de 65 Anos", ylab = "Numero de Medicos")
+plot(Total_Person_Inc,num_Phys, xlab = "Renda Per Capita", ylab = "Numero de Medicos")
+
+summary(modelo.ex628[[1]], correlation = TRUE, digits = 4)$correlation
+summary(modelo.ex628[[2]], correlation = TRUE, digits = 4)$correlation
 ```
 
 Ao observar a matriz dispersão e  correlação, podemos ver que a única correlação realmente grande é entre as variáveis "Total Population" e "Total Personal Income", indicando que o ganho tem um crescimento linear com o total da população. Para o resto das variáveis a correlação é relativamente baixa (sendo negativa para as preditoras Área do terreno e População total) com alta concentração na parte inferior esquerda, o que suporta a ideia descrita no item anterior. 
@@ -196,21 +210,38 @@ Portanto, as funções estimadas $\hat{Y_i}$ são
 
 Logo, podemos concluir que as únicas funções parecidas nos parâmetros são as funções 2 e 3.
 
-Os 
+##item c
+
+Os valors dos $R^2$ e MSE para cada região geográfica são dados a seguir.
+
+```{r r2 e MSE}
+r2 = rep(0,times=max(Geographic_Region))
+MSE.ex629 = rep(0,times=max(Geographic_Region))
+
+for(i in 1:max(Geographic_Region)){
+  r2[i] = summary(modelo1.ex629[[i]])$r.squared
+  MSE.ex629[i] = summary(modelo1.ex629[[i]])$sigma^2
+}
+```
+
+```{r echo=F}
+tralala = round(rbind(r2,MSE.ex629), digits=2)
+colnames(tralala) = c("regiao1","regiao2","regiao3","regiao4")
+tralala
+```
 
 
+Ao ver os resultados de $R^2$ e $MSE$ por região podemos ver que os valores de $R^2$ estão altos mas não tão próximos, ao passo que, para os $MSE$, podemos notar uma grande variância. Portanto, podemos concluir que as similaridades entre regiões, para estes aspectos, só são preservadas para algumas regiões específicas nos valores de $R^2$.
+
+##item d
+
+Ao fazermos os boxplots dos resíduos de cada região, podemos notar que 
 
 
+```{r boxplots_out}
+boxplot(modelo1.ex629[[1]]$residuals,modelo1.ex629[[2]]$residuals,modelo1.ex629[[3]]$residuals,modelo1.ex629[[1]]$residuals, range=5, names=c("regiao 1","regiao 2","regiao 3","regiao 4"))
+```
 
-
-
-
-
-
-
-
-
-
-
+Para todas as regiões, podemos ver que há uma grande concentração de massa em torno do zero. Além disso, ao observarmos os valores máximos e mínimos de cada gráfico, para a escala atual, percebemos que a dispersão do resíduo é relativamente similar entre as regiões. Por fim, o ponto mais claro é a questão dos outliers, sendo bem visível para os boxplots 1 e 4 (os casos 2 e 3 são discutíveis).
 
 
