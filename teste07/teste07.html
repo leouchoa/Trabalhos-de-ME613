@@ -222,7 +222,39 @@ modelo2 = lm(num_Phys ~ Total_Pop/Land_Area + Pct_65Plus + Total_Person_Inc)</co
 </div>
 <div id="item-e" class="section level2">
 <h2>item e</h2>
-<p>Para este, basta utilizar “plot(modelo.ex143[[i]], which = c(j,k))”, caso outra pessoal, além de mim, que vá resolver (nao perca tempo)</p>
+<p>Para este, basta utilizar “plot(modelo.ex143[[i]], which = c(j,k))”, caso outra pessoal, além de mim, que vá resolver nao perca tempo</p>
+</div>
+</div>
+<div id="exercicio-6.29" class="section level1">
+<h1>Exercício 6.29</h1>
+<div id="itens-a-b" class="section level2">
+<h2>itens a-b</h2>
+<p>Para este exercício, usaremos o conjunto de dados CDI para entender como os números de crimes graves, densidade populacional, ganho pessoal per capita e porcentagem de graduados com ensino médio se relacionam em cada região geográfica. Em especial, faremos uma regressão do número de crimes graves contra as outras variáveis, ou seja, tentaremos explicar o comportamento de Y(número de crimes graves) utilizando <span class="math inline">\(X_1\)</span>(densidade populacional), <span class="math inline">\(X_2\)</span>(ganho pessoal per capita) e <span class="math inline">\(X_3\)</span>(porcentagem de graduados com ensino médio). O modelo proposto para isto será <span class="math display">\[Y_i = \sum_{i=0}^{k}X_i \beta_i + \epsilon_i\]</span> cuja função de regressão é <span class="math display">\[E\{Y_i\} = \sum_{i=0}^{k}X_i \beta_i\]</span> onde <span class="math inline">\(X_0 = 1\)</span> e <span class="math inline">\(k=3\)</span>. Para este modelo e, para cada um das 4 regiões geográficas (i=4), a técnica de regressão utilizada é dada pelo código abaixo.</p>
+<pre class="r"><code>modelo1.ex629 = vector(&quot;list&quot;,max(Geographic_Region))
+beta.ex629 = matrix(0,nrow=max(Geographic_Region),ncol=4)
+colnames(beta.ex629) = c(&quot;beta0&quot;,&quot;beta1&quot;,&quot;beta2&quot;,&quot;beta3&quot;)
+rownames(beta.ex629) = c(&quot;regiao1&quot;,&quot;regiao2&quot;,&quot;regiao3&quot;,&quot;regiao4&quot;)
+Dens=Total_Pop/Land_Area 
+
+for(i in 1:max(Geographic_Region)){
+  modelo1.ex629[[i]] = lm(Total_Crimes[which(Geographic_Region ==i)] ~ Dens[which(Geographic_Region==i)] +  Total_Person_Inc[which(Geographic_Region ==i)] + Pct_HSG[which(Geographic_Region==i)])
+  beta.ex629[i,] = coef(modelo1.ex629[[i]])
+}
+(round(beta.ex629,digits = 3))</code></pre>
+<pre><code>##             beta0  beta1 beta2    beta3
+## regiao1 -26139.09 16.336 0.383  291.068
+## regiao2  63104.12  2.588 3.602 -854.549
+## regiao3  56929.39  0.306 4.896 -800.396
+## regiao4  37724.58 -0.992 3.627 -489.015</code></pre>
+<p>Portanto, as funções estimadas <span class="math inline">\(\hat{Y_i}\)</span> são</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(\hat{{Y_1}_i}\)</span> = -26139.09 + 16.336<span class="math inline">\({X_1}_i\)</span> + 0.383<span class="math inline">\({X_2}_i\)</span> + 291.068<span class="math inline">\({X_3}_i\)</span></li>
+<li><span class="math inline">\(\hat{{Y_2}_i}\)</span> = 63104.12 + 2.588<span class="math inline">\({X_1}_i\)</span> + 3.602<span class="math inline">\({X_2}_i\)</span> - 854.549<span class="math inline">\({X_3}_i\)</span></li>
+<li><span class="math inline">\(\hat{{Y_3}_i}\)</span> = 56929.39 + 0.306<span class="math inline">\({X_1}_i\)</span> + 4.896<span class="math inline">\({X_2}_i\)</span> - 800.396<span class="math inline">\({X_3}_i\)</span></li>
+<li><span class="math inline">\(\hat{{Y_4}_i}\)</span> = 37724.58 - 0.992<span class="math inline">\({X_1}_i\)</span> + 3.627<span class="math inline">\({X_2}_i\)</span> - 489.015<span class="math inline">\({X_3}_i\)</span></li>
+</ol>
+<p>Logo, podemos concluir que as únicas funções parecidas nos parâmetros são as funções 2 e 3.</p>
+<p>Os</p>
 </div>
 </div>
 

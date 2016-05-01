@@ -168,5 +168,49 @@ Adicionalmente, gostariamos de utilizar o $R^2$ múltiplo para ter uma palpite i
 Para este, basta utilizar "plot(modelo.ex143[[i]], which = c(j,k))", caso outra pessoal, além de mim, que vá resolver nao perca tempo
 
 
+#Exercício 6.29
+##itens a-b
+
+Para este exercício, usaremos o conjunto de dados CDI para entender como os números de crimes graves, densidade populacional, ganho pessoal per capita e porcentagem de graduados com ensino médio se relacionam em cada região geográfica. Em especial, faremos uma regressão do número de crimes graves contra as outras variáveis, ou seja, tentaremos explicar o comportamento de Y(número de crimes graves) utilizando $X_1$(densidade populacional), $X_2$(ganho pessoal per capita) e $X_3$(porcentagem de graduados com ensino médio). O modelo proposto para isto será $$Y_i = \sum_{i=0}^{k}X_i \beta_i + \epsilon_i$$ cuja função de regressão é $$E\{Y_i\} = \sum_{i=0}^{k}X_i \beta_i$$ onde $X_0 = 1$ e $k=3$. Para este modelo e, para cada um das 4 regiões geográficas (i=4), a técnica de regressão utilizada é dada pelo código abaixo.
+
+
+```{r reg.ex629}
+modelo1.ex629 = vector("list",max(Geographic_Region))
+beta.ex629 = matrix(0,nrow=max(Geographic_Region),ncol=4)
+colnames(beta.ex629) = c("beta0","beta1","beta2","beta3")
+rownames(beta.ex629) = c("regiao1","regiao2","regiao3","regiao4")
+Dens=Total_Pop/Land_Area 
+
+for(i in 1:max(Geographic_Region)){
+  modelo1.ex629[[i]] = lm(Total_Crimes[which(Geographic_Region ==i)] ~ Dens[which(Geographic_Region==i)] +  Total_Person_Inc[which(Geographic_Region ==i)] + Pct_HSG[which(Geographic_Region==i)])
+  beta.ex629[i,] = coef(modelo1.ex629[[i]])
+}
+(round(beta.ex629,digits = 3))
+```
+Portanto, as funções estimadas $\hat{Y_i}$ são 
+
+1. $\hat{{Y_1}_i}$ = -26139.09 + 16.336${X_1}_i$ + 0.383${X_2}_i$ + 291.068${X_3}_i$
+2. $\hat{{Y_2}_i}$ =  63104.12 + 2.588${X_1}_i$ + 3.602${X_2}_i$ - 854.549${X_3}_i$
+3. $\hat{{Y_3}_i}$ =  56929.39 + 0.306${X_1}_i$ + 4.896${X_2}_i$ - 800.396${X_3}_i$
+4. $\hat{{Y_4}_i}$ =  37724.58 - 0.992${X_1}_i$ + 3.627${X_2}_i$ - 489.015${X_3}_i$
+
+Logo, podemos concluir que as únicas funções parecidas nos parâmetros são as funções 2 e 3.
+
+Os 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
