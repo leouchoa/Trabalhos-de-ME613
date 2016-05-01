@@ -38,7 +38,7 @@ Devemos construir um intervalo conjunto de Bonferroni para ambos $\beta_{0}$ e $
 betas.ex143
 ```
 
-Lembre-se que o intervalo conjunto dado pela desigualdade de Bonferroni é $$\hat{\beta_{i}} \pm t_{n-2;alpha/2}\sqrt{\widehat{V(\widehat{\beta_{i}})}}.$$ Logo, o código a seguir nos permite obter os intervalos para os intercepto e coeficiente angular, respectivamente.
+Lembre-se que o intervalo -conservativo- conjunto dado pela desigualdade de Bonferroni é $$\hat{\beta_{i}} \pm t_{n-2;alpha/4}\sqrt{\widehat{V(\widehat{\beta_{i}})}}.$$ Logo, o código a seguir nos permite obter os intervalos para os intercepto e coeficiente angular, respectivamente.
 
 ```{r IC_Bonf_alg}
 m = length(betas.ex143[1,])
@@ -63,5 +63,71 @@ round(IC.bonf, digits=6)
 
 Neste item, é sugerido que $\beta_{0} = -100$ e $\beta_{1} = 0.0028$. Ao observar os limites construidos em a), podemos concluir que o intervalo suporta sim esta proposta, pois -100 está entre $[`r IC.bonf[1,] `]$ e 0.0028 está entre $[`r IC.bonf[2,] `]$.
 
-#item c
+#itens c-d
+
+Gostariamos de estimar o número esperado de médicos para condados de tamanho de tamanhos 500, 1000 e 5000, ou seja, é um problema de predição. Para uma boa estimação, criamos intervalos de confiança para os 3 estimadores pontuais das médias das distribuições. Entretanto, para construir estes intervalos, temos dois possíveis procedimentos, sendo eles Bonferroni e Working-Hotelling. Assim, vamos primeiro avaliar cada método, escolher o mais eficaz e só então construir o intervalo para o resposta média para cada condado.
+
+Primeiramente, note que os métodos são bem parecidos 
+
+1. Bonferroni
+ $$\hat{Y_h} \pm B\sqrt{\widehat{V(\widehat{Y_h})}}$$
+ 
+    onde $$B = t(n-2;alpha/(2g))$$
+
+2. Working-Hotelling
+ $$\hat{Y_h} \pm W\sqrt{\widehat{V(\widehat{Y_h})}}$$
+
+    onde $$W^2 = gF(1-alpha;g , n - 2)$$ $g$ é o número de estimadores pontuais para os quais queremos criar o intervalo conjunto e a variância do estimador de predição de média, $\hat{Y_h}$ é $$V(\hat{Y_h}) = \sqrt{MSE} \sqrt{\frac{1}{g} + \frac{1}{n} + \frac{( X_h - \hat{X})^2}{S_{xx}}}$$.
+
+Desta forma, para obtermos o melhor intervalo basta comparar os quantís W e B e ver qual é o menor, pois a única diferença entre as duas técnicas é o quantil. Segue o algorítmo que obtém estes valores.
+
+```{r comp_w-b}
+alfa=.1
+g=3
+(B = qt(1-alfa/(2*g) ,df=summary(modelo.ex143[[1]])$df[2]))
+(W = sqrt(g*qf(1-alfa ,g ,summary(modelo.ex143[[1]])$df[2])))
+```
+
+Como `r B` é menor `r W`, concluimos que o intervalo de Bonferroni é melhor. Assim, vamos construir um intervalo para cada nível de condado onde a população total satisfaz a condição pedida.
+
+Antes de calcular o diretamente intervalo vamos calcular, por partes, as predições e as variâncias dos estimadores pontuais das médias. Primeiramente as predições, como segue abaixo
+
+```{r predicoes}
+X_h = c(500,1000,5000)
+beta.ex426 = lm(num_Phys ~ Total_Pop)
+y.hat = rep(0,length(X_h))
+for (i in 1:length(X_h)){
+  y.hat[i] = beta.ex426$coefficients[[1]] + beta.ex426$coefficients[[2]]*X_h[i]
+}
+y.hat
+```
+
+Agora as variâncias 
+
+```{r var_pred}
+n=nrow(CDI)
+v_y.hat = rep(0,length=length(X_h))
+MSE2 = summary(beta.ex426)$sigma
+Sxx  = sum((Total_Pop - mean(Total_Pop))^2)
+for (i in 1:length(X_h)) {
+  v_y.hat[i] = sqrt(MSE2*(1/g + 1/n + (X_h[i]-mean(Total_Pop))^2/Sxx))
+}
+v_y.hat
+```
+
+E por fim os intervalos
+
+```{r intervalos}
+IC.ex426c = matrix(nrow = length(X_h),ncol = 2)
+rownames(IC.ex426c) = c("X_1","X_2","X_3")
+colnames(IC.ex426c) = c("lower","upper")
+for (i in 1:length(X_h)) {
+  IC.ex426c[i,] = y.hat[i] + c(-1,1)*B*v_y.hat[i]
+}
+IC.ex426c
+```
+
+Galera, tem um erro na linha 113. Eu não consigo encontrar o erro. Era pra dar 34.abcdef para cada um ao inves de 14.abcdef para cada, como tá dando. Por favor, procurem o erro, nao consigo encontrar. 
+
+
 

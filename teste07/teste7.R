@@ -96,12 +96,12 @@ colnames(IC.ex426c) = c("Lower Bound", "Upper Bound")
 rownames(IC.ex426c) = as.character(vet.ex146c)
 sigma = summary(modelo.ex143[[1]])$sigma
 SXX = sum((Total_Pop - mean(Total_Pop))^2)
-qt = qt(1 - alfa/2*m, summary(modelo.ex143[[1]])$df[2], lower.tail = FALSE)
+qt = qt(alfa/2*m, summary(modelo.ex143[[1]])$df[2], lower.tail = FALSE)
 
 for (i in 1:length(vet.ex146c)){
   #County[which(Total_Pop >= vet.ex146c[i]*10^3 & Total_Pop < vet.ex146c[i]*10^3)]
   y.hat = betas.ex143[1,1] + betas.ex143[1,2]*vet.ex146c[i]*10^3
-  IC.ex426c[i,] = y.hat + c(-1,1)*sigma*sqrt(1 + 1/length(Total_Pop)
+  IC.ex426c[i,] = y.hat + c(-1,1)*sqrt(sigma)*sqrt(1 + 1/length(Total_Pop)
                   + (vet.ex146c[i] - mean(Total_Pop))^2/SXX)
 }
 
