@@ -150,9 +150,9 @@ par(pty="s")
 par(mfrow = c(2,3))
 plot(x = Total_Pop, y = num_Phys, xlab = "Populacao Total" , ylab = "Numero de Medicos")
 plot(Land_Area,num_Phys, xlab = "Area", ylab = "Numero de Medicos")
+plot(Pct_65Plus,num_Phys, xlab = "Percentagem Populacao Acima de 65 Anos", ylab = "Numero de Medicos")
 plot(Total_Person_Inc,num_Phys, xlab = "Renda Per Capita", ylab = "Numero de Medicos")
 plot(dens_Pop,num_Phys, xlab = "Densidade Populacional", ylab = "Numero de Medicos")
-plot(Pct_65Plus,num_Phys, xlab = "Percentagem Populacao Acima de 65 Anos", ylab = "Numero de Medicos")
 plot(Pct_65Plus,num_Phys, xlab = "Percentagem Populacao Acima de 65 Anos", ylab = "Numero de Medicos")
 
 summary(modelo.ex628[[1]], correlation = TRUE, digits = 4)$correlation
@@ -182,13 +182,49 @@ Adicionalmente, gostariamos de utilizar o $R^2$ múltiplo para ter uma palpite i
 ```
 
 ##item e
-Para este, basta utilizar "plot(modelo.ex143[[i]], which = c(j,k))", caso outra pessoal, além de mim, que vá resolver nao perca tempo
+```{r isso_deu_mt_trabalho}
+modelo.ex628 = vector("list", 2)
+Dens = Total_Pop/Land_Area
+
+modelo.ex628[[1]] = lm(num_Phys ~ Total_Pop*Land_Area*Total_Person_Inc)
+modelo.ex628[[2]] = lm(num_Phys ~ Dens*Pct_65Plus*Total_Person_Inc)
+
+for(i in 1:length(modelo.ex628)){
+  writeLines("Gráficos para o modelo")
+  
+  writeLines("Resíduo vs Ajustado")
+  par(pty="s")
+  plot(modelo.ex628[[i]]$fitted.values, modelo.ex628[[i]]$residuals, xlab = "Ajustado", ylab=   "Residuos") # Residuals x fitted
+  
+  writeLines("Resíduos vs Preditoras")
+  par(mfrow = c(1,3))
+  
+  for(j in 2:length(modelo.ex628[[i]]$model)){
+    par(pty="s")
+    plot(data.matrix(modelo.ex628[[i]]$model[j]), modelo.ex628[[i]]$residuals, xlab=colnames(modelo.ex628[[i]]$model)[j], ylab="Residuos") # Residuals x                 Predictors
+    
+  }
+  
+  comb = combn(c(2,3,4),2)
+  writeLines("Resíduo vs Interação")
+  par(pty="s")
+  par(mfrow = c(1,ncol(comb)))
+  for(k in 1:ncol(comb)){
+    plot(data.matrix(exp(log(modelo.ex628[[i]]$model[comb[1,k]])+log(modelo.ex628[[i]]$model[comb[2,k]]))), modelo.ex628[[i]]$residuals, ylab = "Residuos", xlab = c(colnames(modelo.ex628[[1]]$model)[comb[1,k]],colnames(modelo.ex628[[1]]$model)[comb[2,k]]))
+  }
+  
+  
+  writeLines("Gráfico de Normalidade")
+  par(mfrow=c(1,1))
+  plot(modelo.ex628[[i]], which = 2, xlab="Modelo") # Normal Probability Plot for i-model
+}
+```
 
 
 #Exercício 6.29
 ##itens a-b
 
-Para este exercício, usaremos o conjunto de dados CDI para entender como os números de crimes graves, densidade populacional, ganho pessoal per capita e porcentagem de graduados com ensino médio se relacionam em cada região geográfica. Em especial, faremos uma regressão do número de crimes graves contra as outras variáveis, ou seja, tentaremos explicar o comportamento de Y(número de crimes graves) utilizando $X_1$(densidade populacional), $X_2$(ganho pessoal per capita) e $X_3$(porcentagem de graduados com ensino médio). O modelo proposto para isto será $$Y_i = \sum_{i=0}^{k}X_i \beta_i + \epsilon_i$$ cuja função de regressão é $$E\{Y_i\} = \sum_{i=0}^{k}X_i \beta_i$$ onde $X_0 = 1$ e $k=3$. Para este modelo e, para cada um das 4 regiões geográficas (i=4), a técnica de regressão utilizada é dada pelo código abaixo.
+Para este exercício, usaremos o conjunto de dados CDI para entender como os números de crimes graves, densidade populacional, renda pessoal total e porcentagem de graduados com ensino médio se relacionam em cada região geográfica. Em especial, faremos uma regressão do número de crimes graves contra as outras variáveis, ou seja, tentaremos explicar o comportamento de Y(número de crimes graves) utilizando $X_1$(densidade populacional), $X_2$(renda pessoal total) e $X_3$(porcentagem de graduados com ensino médio). O modelo proposto para isto será $$Y_i = \sum_{i=0}^{k}X_i \beta_i + \epsilon_i$$ cuja função de regressão é $$E\{Y_i\} = \sum_{i=0}^{k}X_i \beta_i$$ onde $X_0 = 1$ e $k=3$. Para este modelo e, para cada um das 4 regiões geográficas (i=4), a técnica de regressão utilizada é dada pelo código abaixo.
 
 
 ```{r reg.ex629}
